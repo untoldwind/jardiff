@@ -3,7 +3,7 @@ package jardiff
 import com.github.difflib.DiffUtils
 import com.github.difflib.UnifiedDiffUtils
 
-class Differ(val contentReader: ContentReader) {
+class Differ(private val contentReader: ContentReader) {
     fun diff(leftCollection: FileCollection, rightCollection: FileCollection) {
         val leftFiles = leftCollection.files().toSet()
         val rightFiles = rightCollection.files().toSet()

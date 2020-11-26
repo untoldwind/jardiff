@@ -1,6 +1,6 @@
 package jardiff
 
-class Dumper(val contentReader: ContentReader) {
+class Dumper(private val contentReader: ContentReader) {
     fun dumpContents(fileCollection: FileCollection) {
         fileCollection.files().sorted().forEach {
             println()

@@ -6,7 +6,7 @@ import org.objectweb.asm.util.Textifier
 import org.objectweb.asm.util.TraceClassVisitor
 import java.io.*
 
-class ContentReader(val ignoreClassVersion: Boolean) {
+class ContentReader(private val ignoreClassVersion: Boolean) {
     fun readContent(fileName: String, input: InputStream): List<String> = when (extension(fileName)) {
         "mf", "xml", "properties" -> lineDump(input)
         "class" -> classDump(input)
