@@ -1,13 +1,13 @@
 package jardiff
 
-object Dumper {
+class Dumper(val contentReader: ContentReader) {
     fun dumpContents(fileCollection: FileCollection) {
         fileCollection.files().sorted().forEach {
             println()
             println()
             println(it)
             println()
-            fileCollection.lines(it).forEach { println(it) }
+            contentReader.readContent(it, fileCollection.content(it)).forEach { println(it) }
         }
     }
 }

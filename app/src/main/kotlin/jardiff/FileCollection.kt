@@ -1,12 +1,13 @@
 package jardiff
 
+import java.io.InputStream
 import java.nio.file.Files
 import java.nio.file.Paths
 
 interface FileCollection {
     fun files() : List<String>
 
-    fun lines(file: String): List<String>
+    fun content(file: String): InputStream
 
     companion object {
         fun openCollection(fileName: String) : FileCollection {

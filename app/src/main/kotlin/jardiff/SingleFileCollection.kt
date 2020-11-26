@@ -1,13 +1,10 @@
 package jardiff
 
+import java.io.InputStream
 import java.nio.file.Path
 
-class SingleFileCollection(val filePath: Path) : FileCollection {
+class SingleFileCollection(private val filePath: Path) : FileCollection {
     override fun files(): List<String> = listOf(filePath.toString())
 
-    override fun lines(file: String): List<String> =
-            if (file == filePath.toString())
-                ContentReader.readContent(file, filePath.toFile().inputStream())
-            else
-                emptyList()
+    override fun content(file: String): InputStream = filePath.toFile().inputStream()
 }

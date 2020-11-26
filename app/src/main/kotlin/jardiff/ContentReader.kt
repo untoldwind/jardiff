@@ -6,7 +6,7 @@ import org.objectweb.asm.util.Textifier
 import org.objectweb.asm.util.TraceClassVisitor
 import java.io.*
 
-object ContentReader {
+class ContentReader(val ignoreClassVersion: Boolean) {
     fun readContent(fileName: String, input: InputStream): List<String> = when (extension(fileName)) {
         "mf", "xml", "properties" -> lineDump(input)
         "class" -> classDump(input)
@@ -40,6 +40,8 @@ object ContentReader {
 
         ClassReader(input).accept(visitor, ClassReader.SKIP_DEBUG)
 
-        return out.toString().split('\n')
+        val lines = out.toString().split('\n')
+
+        return if(ignoreClassVersion) lines.filter { !it.startsWith("// class version ") } else lines
     }
 }
