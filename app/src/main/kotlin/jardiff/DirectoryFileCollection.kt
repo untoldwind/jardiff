@@ -1,6 +1,5 @@
 package jardiff
 
-import java.io.File
 import java.io.InputStream
 import java.nio.file.Files
 import java.nio.file.Path
@@ -11,5 +10,5 @@ class DirectoryFileCollection(private val directory: Path) : FileCollection {
 
     override fun files(): List<String> = files
 
-    override fun content(file: String): InputStream = File(directory.toFile(), file).inputStream()
+    override fun content(file: String): InputStream = Files.newInputStream(directory.resolve(file))
 }

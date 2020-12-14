@@ -5,7 +5,7 @@ class Dumper(private val contentReader: ContentReader) {
         fileCollection.files().sorted().forEach {
             println()
             println()
-            println(it)
+            println("File: $it")
             println()
             contentReader.readContent(it, fileCollection.content(it)).forEach { println(it) }
         }
