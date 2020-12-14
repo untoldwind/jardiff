@@ -12,12 +12,12 @@ class Differ(private val contentReader: ContentReader) {
             if (!leftFiles.contains(file)) {
                 println()
                 println("Left missing: $file")
-                break
+                continue
             }
             if (!rightFiles.contains(file)) {
                 println()
                 println("Right missing: $file")
-                break
+                continue
             }
 
             val leftContent = contentReader.readContent(file, leftCollection.content(file))
