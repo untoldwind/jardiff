@@ -5,14 +5,13 @@ import java.nio.file.Files
 import java.nio.file.Path
 import java.util.jar.JarFile
 
-class EarFileCollection(file: Path) : FileCollection {
-    val tempDir : Path
-    val files : List<String>
-    val jarFiles: Map<String, JarFileCollection>
+class EarFileCollection(earFile: Path) : FileCollection {
+    private val tempDir : Path = Files.createTempDirectory("jardiff")
+    private val files : List<String>
+    private val jarFiles: Map<String, JarFileCollection>
 
     init {
-        tempDir = Files.createTempDirectory("jardiff")
-        val ear = JarFile(file.toFile())
+        val ear = JarFile(earFile.toFile())
         val allFiles = mutableListOf<String>()
         val allJarFiles = mutableMapOf<String, JarFileCollection>()
 
@@ -21,12 +20,12 @@ class EarFileCollection(file: Path) : FileCollection {
                 val dir = tempDir.resolve(entry.name)
                 Files.createDirectory(dir)
             } else {
-                val file = tempDir.resolve(entry.name)
+                val tmpFile = tempDir.resolve(entry.name)
                 val content = ear.getInputStream(entry)
-                Files.copy(content, file)
+                Files.copy(content, tmpFile)
 
-                if(JarFileCollection.isJarFile(file)) {
-                    val jarFile = JarFileCollection(file)
+                if(JarFileCollection.isJarFile(tmpFile)) {
+                    val jarFile = JarFileCollection(tmpFile)
                     allJarFiles.put(entry.name, jarFile)
 
                     for(file in jarFile.files()) {
