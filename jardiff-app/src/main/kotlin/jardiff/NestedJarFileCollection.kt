@@ -18,10 +18,11 @@ class NestedJarFileCollection(earFile: Path) : FileCollection {
         for(entry in ear.entries()) {
             if(entry.isDirectory) {
                 val dir = tempDir.resolve(entry.name)
-                Files.createDirectory(dir)
+                Files.createDirectories(dir)
             } else {
                 val tmpFile = tempDir.resolve(entry.name)
                 val content = ear.getInputStream(entry)
+                Files.createDirectories(tmpFile.parent)
                 Files.copy(content, tmpFile)
 
                 if(JarFileCollection.isJarFile(tmpFile)) {
