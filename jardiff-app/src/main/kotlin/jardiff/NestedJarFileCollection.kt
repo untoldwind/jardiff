@@ -5,15 +5,15 @@ import java.nio.file.Files
 import java.nio.file.Path
 import java.util.jar.JarFile
 
-class EarFileCollection(earFile: Path) : FileCollection {
+class NestedJarFileCollection(earFile: Path) : FileCollection {
     private val tempDir : Path = Files.createTempDirectory("jardiff")
     private val files : List<String>
-    private val jarFiles: Map<String, JarFileCollection>
+    private val jarFiles: Map<String, FileCollection>
 
     init {
         val ear = JarFile(earFile.toFile())
         val allFiles = mutableListOf<String>()
-        val allJarFiles = mutableMapOf<String, JarFileCollection>()
+        val allJarFiles = mutableMapOf<String, FileCollection>()
 
         for(entry in ear.entries()) {
             if(entry.isDirectory) {
@@ -26,9 +26,16 @@ class EarFileCollection(earFile: Path) : FileCollection {
 
                 if(JarFileCollection.isJarFile(tmpFile)) {
                     val jarFile = JarFileCollection(tmpFile)
-                    allJarFiles.put(entry.name, jarFile)
+                    allJarFiles[entry.name] = jarFile
 
-                    for(file in jarFile.files()) {
+                    for (file in jarFile.files()) {
+                        allFiles.add("${entry.name}!$file")
+                    }
+                } else if(isNestedJarFile(tmpFile)) {
+                    val nestedFile = NestedJarFileCollection(tmpFile)
+                    allJarFiles[entry.name] = nestedFile
+
+                    for (file in nestedFile.files()) {
                         allFiles.add("${entry.name}!$file")
                     }
                 } else {
@@ -46,15 +53,10 @@ class EarFileCollection(earFile: Path) : FileCollection {
     override fun content(file: String): InputStream {
         val parts = file.split('!')
 
-        if(parts.size > 1) {
-            val jarFile = jarFiles.get(parts[0])
-            return jarFile!!.content(parts[1])
-        } else {
-            return Files.newInputStream(tempDir.resolve(file))
-        }
+        return if(parts.size > 1) jarFiles[parts[0]]!!.content(parts[1]) else Files.newInputStream(tempDir.resolve(file))
     }
 
     companion object {
-        fun isEarFile(file: Path): Boolean = Files.isRegularFile(file) && (file.fileName.toString().endsWith(".ear"))
+        fun isNestedJarFile(file: Path): Boolean = Files.isRegularFile(file) && (file.fileName.toString().endsWith(".ear") || file.fileName.toString().endsWith(".war") || file.fileName.toString().endsWith(".sar"))
     }
 }

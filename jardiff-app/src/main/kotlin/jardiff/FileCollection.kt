@@ -17,8 +17,8 @@ interface FileCollection {
 
             if(Files.isDirectory(file))
                 return DirectoryFileCollection(file)
-            else if(EarFileCollection.isEarFile(file))
-                return EarFileCollection(file)
+            else if(NestedJarFileCollection.isNestedJarFile(file))
+                return NestedJarFileCollection(file)
             else if(JarFileCollection.isJarFile(file))
                 return JarFileCollection(file)
             else
